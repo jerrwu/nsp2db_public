@@ -1,4 +1,5 @@
 from __future__ import print_function
+import sys
 import os
 import argparse
 import shutil
@@ -15,8 +16,18 @@ print('< ============Add NSP to DB============= >')
 print(' \______________________________________/ ')
 print('')
 
-# get database password
-dbpass=getpass.getpass('Database password: ')
+db=open('db.ini','r')
+data=db.readlines()
+db.close()
+
+dbhost=data[0].split()[2]
+dbuser=data[1].split()[2]
+
+if len(data[2].split())==3:
+    dbpass=data[2].split()[2]
+else:
+    # get database password
+    dbpass=getpass.getpass('Database password: ')
 
 
 try:
@@ -29,6 +40,7 @@ try:
 except:
     print('Invalid password, please restart the program')
     time.sleep(2)
+    sys.exit()
 
 cursor = nspdb.cursor()
 
