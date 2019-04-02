@@ -51,7 +51,7 @@ def getInfo(filename):
         title_id=idver.split('][')[0].replace('[','')
         version_num=idver.split('][')[1].replace(']','')
         
-        print('\n',
+        print('\n','>filename: {0}'.format(filename),'\n',
             '>title: ',title,'\n',
             '>title_id: ',title_id,'\n',
             '>version_number: ',version_num)
@@ -88,7 +88,7 @@ def getInfo(filename):
         title_id=idver.split('][')[0].replace('[','')
         version_num=idver.split('][')[1].replace(']','')
         
-        print('\n',
+        print('\n','>filename: {0}'.format(filename),'\n',
             '>title: ',title,'\n',
             '>title_id: ',title_id,'\n',
             '>version_number: ',version_num)
@@ -125,7 +125,7 @@ def getInfo(filename):
         title_id=idver.split('][')[0]
         version_num=idver.split('][')[1].replace(']','')
         
-        print('\n',
+        print('\n','>filename: {0}'.format(filename),'\n',
             '>title: ',title,'\n',
             '>title_id: ',title_id,'\n',
             '>version_number: ',version_num)
@@ -166,7 +166,7 @@ def main():
         getInfo(name)
     else:
         filepaths=filedialog.askopenfilenames()
-        print('Selected {0} file(s).\n'.format(len(filepaths)))
+        print('\nSelected {0} file(s).\n'.format(len(filepaths)))
         for f in filepaths:
             print('Processing file {0}/{1}'.
                   format(filepaths.index(f)+1,len(filepaths)))
