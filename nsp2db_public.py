@@ -177,26 +177,27 @@ def main():
             fname=input('Enter game title:')
             cursor.execute(
                 'SELECT * FROM base WHERE game_title like "%{0}%" ORDER BY version_num'.format(fname))
-            data=cursor.fetchall()
-            for i in range(len(data)):
-                print(data[i])
-            print('\n\n')            
         elif ftype=='1':
             fname=input('Enter game title:')
             cursor.execute(
-                'SELECT * FROM `update` WHERE game_title like "%{0}%" ORDER BY version_num'.format(fname))
-            data=cursor.fetchall()
-            for i in range(len(data)):
-                print(data[i])
-            print('\n\n')              
+                'SELECT * FROM `update` WHERE game_title like "%{0}%" ORDER BY version_num'.format(fname))            
         elif ftype=='2':
             fname=input('Enter game title:')
             cursor.execute(
-                'SELECT * FROM dlc WHERE game_title like "%{0}%" ORDER BY version_num'.format(fname))
-            data=cursor.fetchall()
-            for i in range(len(data)):
-                print(data[i])
-            print('\n\n')              
+                'SELECT * FROM dlc WHERE game_title like "%{0}%" ORDER BY version_num'.format(fname))   
+        data=cursor.fetchall()
+        maxlen_title=max(map(lambda x: len(x[1]), data))
+        maxlen_ver=max(map(lambda x: len(x[2]), data))
+        for i in range(len(data)):
+            print('-'*(26+maxlen_title+maxlen_ver))
+            g=data[i]
+            print('|',g[0],
+                  '|',g[1],
+                  '{0}|'.format(' '*(maxlen_title-len(g[1]))),
+                  g[2],
+                  '{0}|'.format(' '*(maxlen_ver-len(g[2]))))
+        print('-'*(26+maxlen_title+maxlen_ver))
+        print('\n\n')         
         
     elif mode=='I':
         # passing filename on to info getter
@@ -215,7 +216,7 @@ def main():
         print('Invalid input\n')
         main()
         
-    input('Press Enter to exit') 
+    input('Press Enter to exit')
 
 if __name__=='__main__':
     main()
