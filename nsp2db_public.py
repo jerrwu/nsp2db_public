@@ -5,7 +5,6 @@ import argparse
 import shutil
 import getpass
 import mysql.connector
-import time
 import tkinter as tk
 from tkinter import filedialog
 
@@ -39,10 +38,11 @@ try:
     print('Connection succeeded')
 except:
     print('Invalid password, please restart the program')
-    time.sleep(2)
     sys.exit()
 
 cursor = nspdb.cursor()
+
+cursor.execute('use nsps')
 
 # convert filepath to filename
 def getName(filepath):
@@ -75,7 +75,6 @@ def getInfo(filename):
             # add upd to db
             add_update=('INSERT INTO `update` (game_title, title_id, version_num)'
                         'VALUES ("{0}", "{1}", "{2}")'.format(title,title_id,version_num))
-            cursor.execute('use nsps')
             cursor.execute(add_update)
             print('Update NSP info successfully added to DB!')
             nspdb.commit()
@@ -84,10 +83,8 @@ def getInfo(filename):
             for i in range(len(data)):
                 print(data[i])
             print('\n\n')
-            time.sleep(1)
         else:
             print('Aborted')
-            time.sleep(0.5)
     
     # dlc
     elif '[DLC]' in filename:
@@ -113,7 +110,6 @@ def getInfo(filename):
             # add dlc to db
             add_update=('INSERT INTO dlc (game_title, title_id, version_num)'
                         'VALUES ("{0}", "{1}", "{2}")'.format(title,title_id,version_num))
-            cursor.execute('use nsps')
             cursor.execute(add_update)
             print('DLC NSP info successfully added to DB!')
             nspdb.commit()
@@ -122,10 +118,8 @@ def getInfo(filename):
             for i in range(len(data)):
                 print(data[i])
             print('\n\n')
-            time.sleep(1)
         else:
             print('Aborted')
-            time.sleep(0.5) 
     
     # base
     else:
@@ -151,7 +145,6 @@ def getInfo(filename):
             # add base to db
             add_update=('INSERT INTO base (game_title, title_id, version_num)'
                         'VALUES ("{0}", "{1}", "{2}")'.format(title,title_id,version_num))
-            cursor.execute('use nsps')
             cursor.execute(add_update)
             print('Base NSP info successfully added to DB!')
             nspdb.commit()
@@ -160,10 +153,8 @@ def getInfo(filename):
             for i in range(len(data)):
                 print(data[i])
             print('\n\n')
-            time.sleep(1)
         else:
-            print('Aborted')
-            time.sleep(0.5)        
+            print('Aborted')    
         
 def main():
     
@@ -175,19 +166,56 @@ def main():
     root=tk.Tk()
     root.withdraw()    
     
-    # passing filename on to info getter
-    if args.name:
-        name=input('NSP filename: ')
-        getInfo(name)
+    mode=input(
+        'Select search or import:\nInput S for search\nInput I for import\n>')
+    print('\n')
+    if mode=='S':
+        print('Mode: Search\n\nSelect type:\nInput 0 for base\nInput 1 for update\nInput 2 for DLC')
+        ftype=input('>')
+        print('\n')
+        if ftype=='0':
+            fname=input('Enter game title:')
+            cursor.execute(
+                'SELECT * FROM base WHERE game_title like "%{0}%" ORDER BY version_num'.format(fname))
+            data=cursor.fetchall()
+            for i in range(len(data)):
+                print(data[i])
+            print('\n\n')            
+        elif ftype=='1':
+            fname=input('Enter game title:')
+            cursor.execute(
+                'SELECT * FROM `update` WHERE game_title like "%{0}%" ORDER BY version_num'.format(fname))
+            data=cursor.fetchall()
+            for i in range(len(data)):
+                print(data[i])
+            print('\n\n')              
+        elif ftype=='2':
+            fname=input('Enter game title:')
+            cursor.execute(
+                'SELECT * FROM dlc WHERE game_title like "%{0}%" ORDER BY version_num'.format(fname))
+            data=cursor.fetchall()
+            for i in range(len(data)):
+                print(data[i])
+            print('\n\n')              
+        
+    elif mode=='I':
+        # passing filename on to info getter
+        if args.name:
+            name=input('NSP filename: ')
+            getInfo(name)
+        else:
+            filepaths=filedialog.askopenfilenames()
+            print('\nSelected {0} file(s).\n'.format(len(filepaths)))
+            for f in filepaths:
+                print('Processing file {0}/{1}'.
+                      format(filepaths.index(f)+1,len(filepaths)))
+                getInfo(getName(f))
+            print('\nEnd of files.\n')
     else:
-        filepaths=filedialog.askopenfilenames()
-        print('\nSelected {0} file(s).\n'.format(len(filepaths)))
-        for f in filepaths:
-            print('Processing file {0}/{1}'.
-                  format(filepaths.index(f)+1,len(filepaths)))
-            getInfo(getName(f))
-        print('\nEnd of files.\n')
-        input('Press Enter to exit')        
+        print('Invalid input\n')
+        main()
+        
+    input('Press Enter to exit') 
 
 if __name__=='__main__':
     main()
