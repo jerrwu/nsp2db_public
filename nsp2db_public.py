@@ -151,19 +151,21 @@ def getInfo(filename):
             print('Aborted')    
             
 def display(data):
-    maxlen_title=max(map(lambda x: len(x[1]), data))
-    maxlen_ver=max(map(lambda x: len(x[2]), data))
-    for i in range(len(data)):
+    if data==[]:
+        print("\nNo files found!")
+    else:
+        maxlen_title=max(map(lambda x: len(x[1]), data))
+        maxlen_ver=max(map(lambda x: len(x[2]), data))
+        for i in range(len(data)):
+            print('-'*(26+maxlen_title+maxlen_ver))
+            g=data[i]
+            print('|',g[0],
+                  '|',g[1],
+                  '{0}|'.format(' '*(maxlen_title-len(g[1]))),
+                  g[2],
+                  '{0}|'.format(' '*(maxlen_ver-len(g[2]))))
         print('-'*(26+maxlen_title+maxlen_ver))
-        g=data[i]
-        print('|',g[0],
-              '|',g[1],
-              '{0}|'.format(' '*(maxlen_title-len(g[1]))),
-              g[2],
-              '{0}|'.format(' '*(maxlen_ver-len(g[2]))))
-    print('-'*(26+maxlen_title+maxlen_ver))
-    print('\n\n')       
-            
+        print('\n\n')  
         
 def main():
     
